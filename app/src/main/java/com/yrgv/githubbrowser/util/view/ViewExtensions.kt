@@ -1,6 +1,7 @@
-package com.yrgv.githubbrowser.util
+package com.yrgv.githubbrowser.util.view
 
 import android.view.View
+import com.yrgv.githubbrowser.util.SimpleCallback
 
 /**
  * Extension functions for the View classes for convenience
