@@ -7,4 +7,6 @@
     <string name="repo_detail_sheet_last_updated">Last Updated</string>
     <string name="repo_detail_sheet_stars">Stars</string>
     <string name="repo_detail_sheet_forks">Forks</string>
+
+    <string name="snackbar_general_error">Oops! Something went wrong</string>
 </resources>

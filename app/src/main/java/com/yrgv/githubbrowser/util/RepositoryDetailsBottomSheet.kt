@@ -1,5 +1,6 @@
 package com.yrgv.githubbrowser.util
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +39,16 @@ class RepositoryDetailsBottomSheet private constructor(private val data: Data) :
         repo_detail_sheet_last_updated_value.text = data.lastUpdated
         repo_detail_sheet_stars_value.text = data.starsCount
         repo_detail_sheet_forks_value.text = data.forksCounts
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            setOnShowListener {
+                findViewById<View>(com.google.android.material.R.id.design_bottom_sheet).apply {
+                    setBackgroundResource(android.R.color.transparent)
+                }
+            }
+        }
     }
 
     data class Data(val lastUpdated: String, val starsCount: String, val forksCounts: String)

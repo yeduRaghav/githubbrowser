@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.yrgv.githubbrowser.R
 import com.yrgv.githubbrowser.util.RepositoryDetailsBottomSheet
 import com.yrgv.githubbrowser.util.toBottomSheetData
@@ -29,9 +30,7 @@ class MainScreenActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        main_screen_search_view.setClickListener {
-            viewModel.searchUser(it)
-        }
+        main_screen_search_view.setClickListener { viewModel.searchUser(it) }
         main_screen_recycler_view.adapter = listAdapter
     }
 
@@ -69,7 +68,8 @@ class MainScreenActivity : AppCompatActivity() {
     private fun showErrorView() {
         main_screen_loading_view.hide()
         main_screen_user_views_group.hide()
-        //todo: show toast?
+        Snackbar.make(main_screen_root_view, R.string.snackbar_general_error, Snackbar.LENGTH_LONG)
+            .show()
     }
 
     private fun showLoadingView() {
