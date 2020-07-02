@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_main_screen.*
 class MainScreenActivity : AppCompatActivity() {
 
     private val viewModel: MainScreenViewModel by lazy {
-        ViewModelProvider(this, ViewModelFactory()).get(MainScreenViewModel::class.java)
+        ViewModelProvider(this, ViewModelFactory(application)).get(MainScreenViewModel::class.java)
     }
 
     private val listAdapter = RepositoriesListAdapter {

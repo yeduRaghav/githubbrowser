@@ -9,4 +9,7 @@
     <string name="repo_detail_sheet_forks">Forks</string>
 
     <string name="snackbar_general_error">Oops! Something went wrong</string>
+
+    <string name="half_of_day_am">AM</string>
+    <string name="half_of_day_pm">PM</string>
 </resources>

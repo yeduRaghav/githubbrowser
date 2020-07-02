@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yrgv.githubbrowser.data.network.GithubApi
+import com.yrgv.githubbrowser.util.resource.ResourceProvider
 import com.yrgv.githubbrowser.util.toUiModels
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -13,6 +14,7 @@ import io.reactivex.schedulers.Schedulers
  * ViewModel for Main Screen
  */
 class MainScreenViewModel constructor(
+    private val resourceProvider: ResourceProvider,
     private val githubApi: GithubApi //todo: make me endpoints
 ) : ViewModel() {
 
@@ -49,7 +51,7 @@ class MainScreenViewModel constructor(
             .subscribe { s, e ->
                 //todo: handle error and exception
                 uiState.postValue(MainScreenUiModel.UiState.LOADED)
-                userRepositories.postValue(s.toUiModels())
+                userRepositories.postValue(s.toUiModels(resourceProvider))
             }
     }
 
