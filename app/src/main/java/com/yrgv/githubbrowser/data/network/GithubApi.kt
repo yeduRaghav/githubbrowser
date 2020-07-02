@@ -2,9 +2,11 @@ package com.yrgv.githubbrowser.data.network
 
 import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
+import io.reactivex.Single
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -21,6 +23,7 @@ interface GithubApi {
         private val apiInstance: GithubApi by lazy {
             Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_URL)
                 .client(OkHttpClient.Builder().build())
                 .build()
@@ -35,11 +38,11 @@ interface GithubApi {
     @GET(USER_ENDPOINT)
     fun getUser(
         @Path("userId") userId: String
-    ): Call<User>
+    ): Single<User>
 
     @GET("$USER_ENDPOINT/repos")
     fun getUserRepos(
         @Path("userId") userId: String
-    ): Call<List<Repository>>
+    ): Single<List<Repository>>
 
 }

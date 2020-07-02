@@ -1,4 +1,4 @@
-package com.yrgv.githubbrowser.ui.model
+package com.yrgv.githubbrowser.ui
 
 /**
  * Defines Ui models for main screens
@@ -17,9 +17,9 @@ class MainScreenUiModel {
     data class Repository(
         val id: Long,
         val name: String,
-        val description: String,
+        val description: String?,
         val lastUpdated: String,
-        val starsCount: Int,
-        val forksCounts: Int
+        val starsCount: String,
+        val forksCounts: String
     )
 }

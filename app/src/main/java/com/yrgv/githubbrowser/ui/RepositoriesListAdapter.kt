@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.yrgv.githubbrowser.R
 import com.yrgv.githubbrowser.ui.RepositoriesListAdapter.RepositoryListItemViewHolder
-import com.yrgv.githubbrowser.ui.model.MainScreenUiModel
 import com.yrgv.githubbrowser.util.RepositoryItemClickListener
 import com.yrgv.githubbrowser.util.view.setThrottledClickListener
 

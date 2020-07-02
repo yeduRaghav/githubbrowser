@@ -3,4 +3,8 @@
 
     <string name="search_view_input_hint">Enter a github user id</string>
     <string name="search_view_button">Search</string>
+
+    <string name="repo_detail_sheet_last_updated">Last Updated</string>
+    <string name="repo_detail_sheet_stars">Stars</string>
+    <string name="repo_detail_sheet_forks">Forks</string>
 </resources>

@@ -41,6 +41,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtVersion"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 
+    //reactive
+    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+
     //api
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"

@@ -5,7 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.yrgv.githubbrowser.R
-import com.yrgv.githubbrowser.ui.model.MainScreenUiModel
+import com.yrgv.githubbrowser.util.RepositoryDetailsBottomSheet
+import com.yrgv.githubbrowser.util.toBottomSheetData
 import com.yrgv.githubbrowser.util.view.hide
 import com.yrgv.githubbrowser.util.view.show
 import kotlinx.android.synthetic.main.activity_main_screen.*
@@ -13,11 +14,11 @@ import kotlinx.android.synthetic.main.activity_main_screen.*
 class MainScreenActivity : AppCompatActivity() {
 
     private val viewModel: MainScreenViewModel by lazy {
-        ViewModelProvider(this).get(MainScreenViewModel::class.java)
+        ViewModelProvider(this, ViewModelFactory()).get(MainScreenViewModel::class.java)
     }
 
     private val listAdapter = RepositoriesListAdapter {
-        //todo: showBottomDialog, check plaid does onClick in search module
+        RepositoryDetailsBottomSheet.show(it.toBottomSheetData(), supportFragmentManager)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,6 +1,6 @@
 package com.yrgv.githubbrowser.util
 
-import com.yrgv.githubbrowser.ui.model.MainScreenUiModel
+import com.yrgv.githubbrowser.ui.MainScreenUiModel
 
 /**
  * Defines Aliases for convenience
