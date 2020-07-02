@@ -1,10 +1,11 @@
 package com.yrgv.githubbrowser.data.network
 
+import android.util.Log
 import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
 import io.reactivex.Single
 import okhttp3.OkHttpClient
-import retrofit2.Call
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,11 +22,21 @@ interface GithubApi {
         private const val USER_ENDPOINT = BASE_URL + "users/{userId}"
 
         private val apiInstance: GithubApi by lazy {
+            val loggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                override fun log(message: String) {
+                    Log.v("Guruve", message)
+                }
+            }).setLevel(HttpLoggingInterceptor.Level.BASIC)
+
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .build()
+
             Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_URL)
-                .client(OkHttpClient.Builder().build())
+                .client(okHttpClient)
                 .build()
                 .create(GithubApi::class.java)
         }

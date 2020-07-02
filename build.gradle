@@ -39,6 +39,7 @@ ext {
     rxAndroidVersion = "2.0.1"
     roomVersion = "2.2.5"
     retrofitVersion = "2.3.0"
+    okhttpLoggingInterceptorVersion = "4.6.0"
 }
 
 task clean(type: Delete) {
