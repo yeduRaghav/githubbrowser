@@ -4,6 +4,7 @@ import android.util.Log
 import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
 import io.reactivex.Single
+import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -22,9 +23,13 @@ interface GithubApi {
         private const val USER_ENDPOINT = BASE_URL + "users/{userId}"
 
         private val apiInstance: GithubApi by lazy {
+            RxJavaPlugins.setErrorHandler { throwable ->
+                Log.e("GuruveRxGlobal", throwable?.message.orEmpty())
+            }
+
             val loggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                 override fun log(message: String) {
-                    Log.v("Guruve", message)
+                    Log.v("GuruveOkHttp", message)
                 }
             }).setLevel(HttpLoggingInterceptor.Level.BASIC)
 

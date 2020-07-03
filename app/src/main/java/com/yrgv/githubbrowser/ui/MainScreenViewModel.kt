@@ -5,8 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yrgv.githubbrowser.data.network.GithubApi
+import com.yrgv.githubbrowser.data.network.endpoints.ApiError
 import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
+import com.yrgv.githubbrowser.util.Either
 import com.yrgv.githubbrowser.util.isResponseInvalid
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
 import com.yrgv.githubbrowser.util.toUiModel
@@ -20,7 +22,7 @@ import io.reactivex.schedulers.Schedulers
  */
 class MainScreenViewModel constructor(
     private val resourceProvider: ResourceProvider,
-    private val githubApi: GithubApi //todo: make me endpoints
+    private val githubApi: GithubApi
 ) : ViewModel() {
 
     private val uiState = MutableLiveData<MainScreenUiModel.UiState>()
@@ -45,29 +47,39 @@ class MainScreenViewModel constructor(
         }
         user.postValue(userFromApi.toUiModel())
         userRepositories.postValue(repositoriesFromApi.toUiModels(resourceProvider))
-
         uiState.postValue(MainScreenUiModel.UiState.LOADED)
     }
 
     @SuppressLint("CheckResult")
     fun searchUser(userId: String) {
         uiState.postValue(MainScreenUiModel.UiState.LOADING)
-
         Single.zip(
             githubApi.getUser(userId).subscribeOn(Schedulers.io()),
             githubApi.getUserRepos(userId).subscribeOn(Schedulers.io()),
-            BiFunction<User, List<Repository>, Pair<User, List<Repository>>> { user, repos ->
-                Pair(user, repos)
+            BiFunction<User, List<Repository>, Either<ApiError, Pair<User, List<Repository>>>> { user, repos ->
+                Either.value(Pair(user, repos))
             }
-        ).doOnError {
-            uiState.postValue(MainScreenUiModel.UiState.ERROR)
-        }.subscribe { response, exception ->
-            response?.let {
-                handleApiResult(response.first, response.second)
-            }
-            exception?.let {
+        ).onErrorReturn {
+            handleApiException(it)
+        }.subscribe { response ->
+            handleApiResponse(response)
+        }
+    }
+
+    //todo: handle errors correctly or remove me
+    private fun handleApiException(throwable: Throwable): Either<ApiError, Pair<User, List<Repository>>> {
+        return Either.error(ApiError.BadRequest)
+    }
+
+    private fun handleApiResponse(response: Either<ApiError, Pair<User, List<Repository>>>) {
+        when (response) {
+            is Either.Error -> {
                 uiState.postValue(MainScreenUiModel.UiState.ERROR)
+            }
+            is Either.Value -> {
+                handleApiResult(response.value.first, response.value.second)
             }
         }
     }
+
 }
