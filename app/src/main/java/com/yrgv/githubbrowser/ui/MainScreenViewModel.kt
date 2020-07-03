@@ -5,9 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yrgv.githubbrowser.data.network.GithubApi
+import com.yrgv.githubbrowser.data.network.model.Repository
+import com.yrgv.githubbrowser.data.network.model.User
+import com.yrgv.githubbrowser.util.isResponseValid
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
+import com.yrgv.githubbrowser.util.toUiModel
 import com.yrgv.githubbrowser.util.toUiModels
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -34,33 +39,32 @@ class MainScreenViewModel constructor(
         return user
     }
 
+    private fun handleApiResult(userFromApi: User, repositoriesFromApi: List<Repository>) {
+        if (!userFromApi.isResponseValid()) {
+            return uiState.postValue(MainScreenUiModel.UiState.ERROR)
+        }
+        user.postValue(userFromApi.toUiModel())
+        userRepositories.postValue(repositoriesFromApi.toUiModels(resourceProvider))
+        uiState.postValue(MainScreenUiModel.UiState.LOADED)
+    }
+
     @SuppressLint("CheckResult")
     fun searchUser(userId: String) {
-        githubApi.getUser(userId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { s, e ->
-                //todo: handle error and exception
-                uiState.postValue(MainScreenUiModel.UiState.LOADED)
-                user.postValue(MainScreenUiModel.User(s.name, s.avatar_url))
+        Single.zip(
+            githubApi.getUser(userId).subscribeOn(Schedulers.io()),
+            githubApi.getUserRepos(userId).subscribeOn(Schedulers.io()),
+            BiFunction<User, List<Repository>, Pair<User, List<Repository>>> { user, repos ->
+                Pair(user, repos)
             }
-
-        githubApi.getUserRepos(userId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { s, e ->
-                //todo: handle error and exception
-                uiState.postValue(MainScreenUiModel.UiState.LOADED)
-                userRepositories.postValue(s.toUiModels(resourceProvider))
+        ).doOnError {
+            uiState.postValue(MainScreenUiModel.UiState.ERROR)
+        }.subscribe { response, exception ->
+            response?.let {
+                handleApiResult(response.first, response.second)
             }
+            exception?.let {
+                uiState.postValue(MainScreenUiModel.UiState.ERROR)
+            }
+        }
     }
-
-    private fun fetchUserInfo(userId: String) {
-        //todo: zip end points
-    }
-
-    private fun fetchUserRepos(userId: String) {
-        //todo: zip end points
-    }
-
 }

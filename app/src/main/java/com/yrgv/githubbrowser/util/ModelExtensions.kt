@@ -3,6 +3,7 @@ package com.yrgv.githubbrowser.util
 import androidx.annotation.VisibleForTesting
 import com.yrgv.githubbrowser.R
 import com.yrgv.githubbrowser.data.network.model.Repository
+import com.yrgv.githubbrowser.data.network.model.User
 import com.yrgv.githubbrowser.ui.MainScreenUiModel
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
 import org.joda.time.Instant
@@ -10,6 +11,14 @@ import org.joda.time.Instant
 /**
  * Holds extension function useful for various models for their transformation
  * */
+
+fun User.isResponseValid(): Boolean {
+    return name.isNullOrBlank() && avatar_url.isNullOrBlank()
+}
+
+fun User.toUiModel(): MainScreenUiModel.User {
+    return MainScreenUiModel.User(name.orEmpty(), avatar_url.orEmpty())
+}
 
 @VisibleForTesting
 private fun Repository.toUiModel(resourceProvider: ResourceProvider): MainScreenUiModel.Repository {

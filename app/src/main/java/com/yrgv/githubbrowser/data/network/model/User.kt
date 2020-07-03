@@ -6,6 +6,6 @@ import com.google.gson.annotations.SerializedName
  * Describes a github user
  */
 data class User(
-    @SerializedName("name") val name: String,
-    @SerializedName("avatar_url") val avatar_url: String
+    @SerializedName("name") val name: String?,
+    @SerializedName("avatar_url") val avatar_url: String?
 )
