@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.yrgv.githubbrowser.data.network.GithubApi
 import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
-import com.yrgv.githubbrowser.util.isResponseValid
+import com.yrgv.githubbrowser.util.isResponseInvalid
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
 import com.yrgv.githubbrowser.util.toUiModel
 import com.yrgv.githubbrowser.util.toUiModels
@@ -40,16 +40,19 @@ class MainScreenViewModel constructor(
     }
 
     private fun handleApiResult(userFromApi: User, repositoriesFromApi: List<Repository>) {
-        if (!userFromApi.isResponseValid()) {
+        if (userFromApi.isResponseInvalid()) {
             return uiState.postValue(MainScreenUiModel.UiState.ERROR)
         }
         user.postValue(userFromApi.toUiModel())
         userRepositories.postValue(repositoriesFromApi.toUiModels(resourceProvider))
+
         uiState.postValue(MainScreenUiModel.UiState.LOADED)
     }
 
     @SuppressLint("CheckResult")
     fun searchUser(userId: String) {
+        uiState.postValue(MainScreenUiModel.UiState.LOADING)
+
         Single.zip(
             githubApi.getUser(userId).subscribeOn(Schedulers.io()),
             githubApi.getUserRepos(userId).subscribeOn(Schedulers.io()),

@@ -1,6 +1,8 @@
 package com.yrgv.githubbrowser.ui
 
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -50,7 +52,7 @@ class MainScreenActivity : AppCompatActivity() {
         when (state) {
             MainScreenUiModel.UiState.LOADING -> showLoadingView()
             MainScreenUiModel.UiState.ERROR -> showErrorView()
-            MainScreenUiModel.UiState.LOADED -> showUserView()
+            MainScreenUiModel.UiState.LOADED -> showUserViews()
         }
     }
 
@@ -67,19 +69,46 @@ class MainScreenActivity : AppCompatActivity() {
 
     private fun showErrorView() {
         main_screen_loading_view.hide()
-        main_screen_user_views_group.hide()
+        main_screen_user_info_view.hide()
+        main_screen_recycler_view.hide()
         Snackbar.make(main_screen_root_view, R.string.snackbar_general_error, Snackbar.LENGTH_LONG)
             .show()
     }
 
     private fun showLoadingView() {
         main_screen_loading_view.show()
-        main_screen_user_views_group.hide()
+        main_screen_user_info_view.hide()
+        main_screen_recycler_view.hide()
     }
 
-    private fun showUserView() {
+    private fun showUserViews() {
         main_screen_loading_view.hide()
-        main_screen_user_views_group.show()
+        showUserViewsWithAnimation()
+    }
+
+    private fun showUserViewsWithAnimation() {
+        val slideUpAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_up).apply {
+            setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationRepeat(animation: Animation?) {}
+                override fun onAnimationStart(animation: Animation?) {}
+                override fun onAnimationEnd(animation: Animation?) {
+                    showRecyclerViewWithAnimation()
+                }
+            })
+        }
+
+        main_screen_user_info_view.apply {
+            show()
+            startAnimation(slideUpAnimation)
+        }
+    }
+
+    private fun showRecyclerViewWithAnimation() {
+        val slideUpAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_up)
+        main_screen_recycler_view.apply {
+            show()
+            startAnimation(slideUpAnimation)
+        }
     }
 
 }

@@ -6,10 +6,6 @@ import com.yrgv.githubbrowser.util.SimpleCallback
 /**
  * Extension functions for the View classes for convenience
  */
-
-/**
- * Extension functions for the View classes for convenience
- */
 fun View.hide() {
     visibility = View.GONE
 }

@@ -12,7 +12,7 @@ import org.joda.time.Instant
  * Holds extension function useful for various models for their transformation
  * */
 
-fun User.isResponseValid(): Boolean {
+fun User.isResponseInvalid(): Boolean {
     return name.isNullOrBlank() && avatar_url.isNullOrBlank()
 }
 
