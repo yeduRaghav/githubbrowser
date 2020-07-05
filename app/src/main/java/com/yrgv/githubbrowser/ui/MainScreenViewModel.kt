@@ -60,15 +60,10 @@ class MainScreenViewModel constructor(
                 Either.value(Pair(user, repos))
             }
         ).onErrorReturn {
-            handleApiException(it)
+            Either.error(ApiError.getLocalizedErrorResponse(it))
         }.subscribe { response ->
             handleApiResponse(response)
         }
-    }
-
-    //todo: handle errors correctly or remove me
-    private fun handleApiException(throwable: Throwable): Either<ApiError, Pair<User, List<Repository>>> {
-        return Either.error(ApiError.BadRequest)
     }
 
     private fun handleApiResponse(response: Either<ApiError, Pair<User, List<Repository>>>) {
