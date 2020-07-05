@@ -12,4 +12,17 @@
 
     <string name="half_of_day_am">AM</string>
     <string name="half_of_day_pm">PM</string>
+
+    <string name="display_month_january">Jan</string>
+    <string name="display_month_february">Feb</string>
+    <string name="display_month_march">March</string>
+    <string name="display_month_april">April</string>
+    <string name="display_month_may">May</string>
+    <string name="display_month_june">June</string>
+    <string name="display_month_july">Jul</string>
+    <string name="display_month_august">August</string>
+    <string name="display_month_september">September</string>
+    <string name="display_month_october">October</string>
+    <string name="display_month_november">November</string>
+    <string name="display_month_december">December</string>
 </resources>

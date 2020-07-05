@@ -34,12 +34,17 @@ ext {
     cardVersion = "1.0.0"
     materialVersion = "1.1.0"
     picassoVersion ="2.71828"
+    jodaVersion = "2.10.6"
 
     rxJavaVersion = "2.2.19"
     rxAndroidVersion = "2.0.1"
-    roomVersion = "2.2.5"
     retrofitVersion = "2.3.0"
     okhttpLoggingInterceptorVersion = "4.6.0"
+
+    jUnitVersion = "4.12"
+    jUnitExtensionVersion = "1.1.1"
+    mockitoVersion = "2.23.0"
+    espressoVersion = "3.2.0"
 }
 
 task clean(type: Delete) {

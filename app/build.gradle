@@ -40,6 +40,7 @@ dependencies {
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtVersion"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
+    implementation "joda-time:joda-time:$jodaVersion"
 
     //reactive
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
@@ -51,10 +52,9 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttpLoggingInterceptorVersion"
 
-    implementation "joda-time:joda-time:2.10.6"
-
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    //testing
+    testImplementation "junit:junit:$jUnitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$jUnitExtensionVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
 }

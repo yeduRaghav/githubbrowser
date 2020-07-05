@@ -6,14 +6,15 @@ import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
 import com.yrgv.githubbrowser.ui.MainScreenUiModel
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
+import org.joda.time.DateTimeZone
 import org.joda.time.Instant
 
 /**
- * Holds extension function useful for various models for their transformation
+ * Holds extension function useful for various models for their transformation.
  * */
 
 fun User.isResponseInvalid(): Boolean {
-    return name.isNullOrBlank() && avatar_url.isNullOrBlank()
+    return name.isNullOrBlank() || avatar_url.isNullOrBlank()
 }
 
 fun User.toUiModel(): MainScreenUiModel.User {
@@ -26,7 +27,7 @@ private fun Repository.toUiModel(resourceProvider: ResourceProvider): MainScreen
         id = id,
         name = name,
         description = description,
-        lastUpdated = updated_at.toLocalFormat(resourceProvider),
+        lastUpdated = updated_at.serverTimeStampToLocalFormat(resourceProvider),
         starsCount = stargazers_count.toString(),
         forksCounts = forks.toString()
     )
@@ -44,53 +45,74 @@ fun MainScreenUiModel.Repository.toBottomSheetData() : RepositoryDetailsBottomSh
     )
 }
 
-@VisibleForTesting
-fun String.toLocalFormat(resourceProvider: ResourceProvider): String {
-    val dateTime = Instant.parse(this).toDateTime().toLocalDateTime()
 
+/**
+ * @return formatted String that returns date and time in a formatted in original UTC format.
+ * */
+@VisibleForTesting
+fun String.serverTimeStampToLocalFormat(resourceProvider: ResourceProvider): String {
+    val dateTime = Instant.parse(this).toDateTime(DateTimeZone.UTC)
+    val hourOfDay = dateTime.hourOfDay
     return StringBuilder()
-        .append(dateTime.monthOfYear.toDisplayMonth())
+        .append(dateTime.monthOfYear.toDisplayMonth(resourceProvider))
         .append(" ${dateTime.dayOfMonth},")
         .append(" ${dateTime.year}")
-        .append(" ${dateTime.hourOfDay.hourOfDayTo12HourFormat()}")
+        .append(" ${hourOfDay.hourOfDayTo12HourFormat()}")
         .append(":${dateTime.minuteOfHour}")
         .append(":${dateTime.secondOfMinute}")
-        .append(" ${dateTime.hourOfDay.toHalfOfDay(resourceProvider)}")
+        .append(" ${dateTime.hourOfDay.halfOfDayToDisplay(resourceProvider)}")
         .toString()
 }
 
-private fun Int.hourOfDayTo12HourFormat() :Int {
-    return takeIf { this<= 12 } ?: this - 12
+@VisibleForTesting
+fun Int.halfOfDayToDisplay(resourceProvider: ResourceProvider): String {
+    return resourceProvider.getString(this.getHalfOfDayResId()) ?: ""
 }
 
-private fun Int.toHalfOfDay(resourceProvider: ResourceProvider): String {
-    val resId = if (this.isHourOfDayAm()) {
+@VisibleForTesting
+fun Int.hourOfDayTo12HourFormat(): Int? {
+    if (this < 0 || this > 23) return null
+    if (this == 0) return 12
+    return this.takeIf { this <= 12 } ?: this - 12
+}
+
+@VisibleForTesting
+fun Int.getHalfOfDayResId(): Int {
+    return if (this.isHourOfDayAm()) {
         R.string.half_of_day_am
     } else {
         R.string.half_of_day_pm
     }
-    return resourceProvider.getString(resId).orEmpty()
 }
 
-private fun Int.isHourOfDayAm(): Boolean {
+@VisibleForTesting
+fun Int.isHourOfDayAm(): Boolean {
     return this < 12
 }
 
-private fun Int.toDisplayMonth(): String {
+@VisibleForTesting
+fun Int.toDisplayMonth(resourceProvider: ResourceProvider): String {
+    return getDisplayMonthResId()?.let {
+        resourceProvider.getString(it)
+    } ?: ""
+}
+
+@VisibleForTesting
+fun Int.getDisplayMonthResId(): Int? {
     return when (this) {
-        1 -> "Jan"
-        2 -> "Feb"
-        3 -> "Mar"
-        4 -> "Apr"
-        5 -> "May"
-        6 -> "Jun"
-        7 -> "Jul"
-        8 -> "Aug"
-        9 -> "Sep"
-        10 -> "Oct"
-        11 -> "Nov"
-        12 -> "Dec"
-        else -> ""
+        1 -> R.string.display_month_january
+        2 -> R.string.display_month_february
+        3 -> R.string.display_month_march
+        4 -> R.string.display_month_april
+        5 -> R.string.display_month_may
+        6 -> R.string.display_month_june
+        7 -> R.string.display_month_july
+        8 -> R.string.display_month_august
+        9 -> R.string.display_month_september
+        10 -> R.string.display_month_october
+        11 -> R.string.display_month_november
+        12 -> R.string.display_month_december
+        else -> null
     }
 }
 
