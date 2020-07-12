@@ -5,16 +5,16 @@ import java.net.UnknownHostException
 /**
  * Defines localized error responses and their associated data.
  */
-sealed class ApiError(open val message: String?) {
-    object InvalidResponseBodyError : ApiError(null)
-    data class NetworkError(override val message: String?) : ApiError(message)
+sealed class EndpointError(open val message: String?) {
+    object InvalidResponseBodyError : EndpointError(null)
+    data class NetworkError(override val message: String?) : EndpointError(message)
     data class UnhandledError(override val message: String?, val originalException: Throwable?) :
-        ApiError(message)
+        EndpointError(message)
     //add any other errors the app would like to respond to.
 
     companion object {
 
-        fun getLocalizedErrorResponse(exception: Throwable? = null): ApiError {
+        fun getLocalizedErrorResponse(exception: Throwable? = null): EndpointError {
             return when (exception) {
                 is UnknownHostException -> NetworkError(exception.message)
                 else -> getUnhandledError(exception)
@@ -24,7 +24,10 @@ sealed class ApiError(open val message: String?) {
         private fun getUnhandledError(exception: Throwable?): UnhandledError {
             return exception?.let {
                 UnhandledError(exception.message, it)
-            } ?: UnhandledError("Unknown exception, see ApiError.getLocalizedErrorResponse()", null)
+            } ?: UnhandledError(
+                "Unknown exception, see EndpointError.getLocalizedErrorResponse()",
+                null
+            )
         }
 
     }

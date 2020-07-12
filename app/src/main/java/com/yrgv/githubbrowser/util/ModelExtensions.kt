@@ -6,6 +6,8 @@ import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
 import com.yrgv.githubbrowser.ui.MainScreenUiModel
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTimeZone
 import org.joda.time.Instant
 
@@ -33,8 +35,10 @@ private fun Repository.toUiModel(resourceProvider: ResourceProvider): MainScreen
     )
 }
 
-fun List<Repository>.toUiModels(resourceProvider: ResourceProvider):List<MainScreenUiModel.Repository> {
-    return mapTo(arrayListOf()) { it.toUiModel(resourceProvider) }
+suspend fun List<Repository>.toUiModels(resourceProvider: ResourceProvider): List<MainScreenUiModel.Repository> {
+    return withContext(Dispatchers.Default) {
+        mapTo(arrayListOf()) { it.toUiModel(resourceProvider) }
+    }
 }
 
 fun MainScreenUiModel.Repository.toBottomSheetData() : RepositoryDetailsBottomSheet.Data {

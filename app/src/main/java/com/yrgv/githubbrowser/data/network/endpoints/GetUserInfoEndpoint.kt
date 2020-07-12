@@ -5,7 +5,7 @@ import com.yrgv.githubbrowser.data.network.model.User
 import retrofit2.Call
 
 
-class GetUserInfoEndpoint(private val githubApi: GithubApi) : BaseApiEndpoint<User>() {
+class GetUserInfoEndpoint(private val githubApi: GithubApi) : BaseEndpoint<User>() {
 
     private lateinit var userId: String
 

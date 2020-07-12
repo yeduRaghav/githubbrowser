@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yrgv.githubbrowser.data.network.endpoints.ApiError
+import com.yrgv.githubbrowser.data.network.endpoints.EndpointError
 import com.yrgv.githubbrowser.data.network.endpoints.GetUserInfoEndpoint
 import com.yrgv.githubbrowser.data.network.endpoints.GetUserReposEndpoint
 import com.yrgv.githubbrowser.data.network.model.Repository
@@ -15,7 +15,6 @@ import com.yrgv.githubbrowser.util.isResponseInvalid
 import com.yrgv.githubbrowser.util.resource.ResourceProvider
 import com.yrgv.githubbrowser.util.toUiModel
 import com.yrgv.githubbrowser.util.toUiModels
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -52,29 +51,20 @@ class MainScreenViewModel constructor(
 
     private fun fetchUserDataFromApi(userId: String) {
         viewModelScope.launch {
-            val userInfo = async(Dispatchers.IO) { fetchUserInfoFromApi(userId) }
-            val userRepos = async(Dispatchers.IO) { fetchUserReposFromApi(userId) }
+            val userInfo = async { fetchUserInfoFromApi(userId) }
+            val userRepos = async { fetchUserReposFromApi(userId) }
             handleUserDataApiResponse(userInfo.await(), userRepos.await())
         }
     }
 
-    private fun fetchUserInfoFromApi(userId: String): Either<ApiError, User> {
-        return userInfoEndpoint.apply { setData(userId) }.execute()
-    }
-
-    private fun fetchUserReposFromApi(userId: String): Either<ApiError, List<Repository>> {
-        return userReposEndpoint.apply { setData(userId) }.execute()
-    }
-
     private fun handleUserDataApiResponse(
-        userInfo: Either<ApiError, User>,
-        userRepos: Either<ApiError, List<Repository>>
+        userInfo: Either<EndpointError, User>,
+        userRepos: Either<EndpointError, List<Repository>>
     ) {
         if (userInfo.isError() || userRepos.isError()) {
             uiState.postValue(MainScreenUiModel.UiState.ERROR)
             return
         }
-
         if (userInfo is Either.Value && userRepos is Either.Value) {
             handleUserDataApiResponseSuccess(userInfo.value, userRepos.value)
         }
@@ -85,12 +75,19 @@ class MainScreenViewModel constructor(
             uiState.postValue(MainScreenUiModel.UiState.ERROR)
             return
         }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            user.postValue(userInfo.toUiModel())
+        viewModelScope.launch {
             userRepositories.postValue(userRepos.toUiModels(resourceProvider))
+            user.postValue(userInfo.toUiModel())
             uiState.postValue(MainScreenUiModel.UiState.LOADED)
         }
+    }
+
+    private suspend fun fetchUserInfoFromApi(userId: String): Either<EndpointError, User> {
+        return userInfoEndpoint.apply { setData(userId) }.execute()
+    }
+
+    private suspend fun fetchUserReposFromApi(userId: String): Either<EndpointError, List<Repository>> {
+        return userReposEndpoint.apply { setData(userId) }.execute()
     }
 
 }
