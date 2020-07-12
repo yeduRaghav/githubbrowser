@@ -3,12 +3,10 @@ package com.yrgv.githubbrowser.data.network
 import android.util.Log
 import com.yrgv.githubbrowser.data.network.model.Repository
 import com.yrgv.githubbrowser.data.network.model.User
-import io.reactivex.Single
-import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,10 +21,6 @@ interface GithubApi {
         private const val USER_ENDPOINT = BASE_URL + "users/{userId}"
 
         private val apiInstance: GithubApi by lazy {
-            RxJavaPlugins.setErrorHandler { throwable ->
-                Log.e("GuruveRxGlobal", throwable?.message.orEmpty())
-            }
-
             val loggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                 override fun log(message: String) {
                     Log.v("GuruveOkHttp", message)
@@ -39,7 +33,6 @@ interface GithubApi {
 
             Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_URL)
                 .client(okHttpClient)
                 .build()
@@ -54,11 +47,11 @@ interface GithubApi {
     @GET(USER_ENDPOINT)
     fun getUser(
         @Path("userId") userId: String
-    ): Single<User>
+    ): Call<User>
 
     @GET("$USER_ENDPOINT/repos")
     fun getUserRepos(
         @Path("userId") userId: String
-    ): Single<List<Repository>>
+    ): Call<List<Repository>>
 
 }

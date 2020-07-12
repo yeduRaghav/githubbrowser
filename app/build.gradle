@@ -38,13 +38,18 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     implementation "androidx.cardview:cardview:$cardVersion"
     implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtVersion"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "joda-time:joda-time:$jodaVersion"
 
-    //reactive
-    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+
+    //viewModel & live data
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleExtVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_version"
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //api
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"

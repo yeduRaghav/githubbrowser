@@ -17,4 +17,26 @@ sealed class Either<out E, out V> {
         fun <L> error(value: L): Either<L, Nothing> =
             Error(value)
     }
+
+    fun getValueOrNull(): V? {
+        return when (this) {
+            is Value -> value
+            else -> null
+        }
+    }
+
+    fun getErrorOrNull(): E? {
+        return when (this) {
+            is Error -> error
+            else -> null
+        }
+    }
+
+    fun isError(): Boolean {
+        return this is Error
+    }
+
+    fun isValue(): Boolean {
+        return this is Value
+    }
 }
